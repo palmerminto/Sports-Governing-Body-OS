@@ -49,46 +49,50 @@ class My_SportsPress_Team_List_Widget extends WP_Widget {
         $teams = new WP_Query($query_args);
 
         if ($teams->have_posts()) {
-            echo '<div class="elementor-widget-wrap elementor-element-populated  sc_recent_news">';
+            echo '<div class="elementor-widget-wrap elementor-element-populated sc_recent_news">';
             
             while ($teams->have_posts()) {
                 $teams->the_post();
 
-                // Get the team logo
-                $team_logo = get_the_post_thumbnail(null, 'thumbnail'); // Assuming the logo is the post thumbnail
-
-                // Get the team excerpt
-                $team_excerpt = get_the_excerpt();
-
                 // Get the team site URL (assuming it's stored in a custom field called 'team_site_url')
                 $team_site_url = get_post_meta(get_the_ID(), 'team_site_url', true);
-                $team_permalink = $team_site_url ? esc_url($team_site_url) : get_permalink();
 
-                echo '<article class="post_item post_layout_news-excerpt post_format_standard">';
-                
-                // Featured image and link
-                echo '<div class="post_featured with_thumb hover_simple">';
-                if ($team_logo) {
-                    echo '<div class="team-logo">' . $team_logo . '</div>';
+                // Only display the team if the 'team_site_url' is defined
+                if ($team_site_url) {
+                    // Get the team logo
+                    $team_logo = get_the_post_thumbnail(null, 'thumbnail'); // Assuming the logo is the post thumbnail
+
+                    // Get the team excerpt
+                    $team_excerpt = get_the_excerpt();
+
+                    $team_permalink = esc_url($team_site_url);
+
+                    echo '<article class="post_item post_layout_news-excerpt post_format_standard sc_recent_news_style_news-excerpt">';
+                    
+                    // Featured image and link
+                    echo '<div class="post_featured with_thumb hover_simple">';
+                    if ($team_logo) {
+                        echo '<div class="team-logo">' . $team_logo . '</div>';
+                    }
+                    echo '<a href="' . esc_url($team_permalink) . '" class="icons" aria-hidden="true"></a>';
+                    echo '<div class="mask"></div>';
+                    echo '</div>'; // .post_featured
+
+                    // Post content
+                    echo '<div class="post_body">';
+                    echo '<div class="post_header entry-header">';
+                    echo '<h4 class="post_title entry-title"><a href="' . esc_url($team_permalink) . '" rel="bookmark">' . get_the_title() . '</a></h4>';
+                    echo '</div>'; // .post_header
+                    echo '<div class="post_content entry-content">';
+                    if ($team_excerpt) {
+                        echo '<p>' . $team_excerpt . '</p>';
+                    }
+                    echo '<a href="' . esc_url($team_permalink) . '" class="sc_icons_item_button button" style="margin-top: 20px;" target="_blank">Find Out More</a>';
+                    echo '</div>'; // .post_content
+                    echo '</div>'; // .post_body
+
+                    echo '</article>';
                 }
-                echo '<a href="' . esc_url($team_permalink) . '" class="icons" aria-hidden="true"></a>';
-                echo '<div class="mask"></div>';
-                echo '</div>'; // .post_featured
-
-                // Post content
-                echo '<div class="post_body">';
-                echo '<div class="post_header entry-header">';
-                echo '<h4 class="post_title entry-title"><a href="' . esc_url($team_permalink) . '" rel="bookmark">' . get_the_title() . '</a></h4>';
-                echo '</div>'; // .post_header
-                echo '<div class="post_content entry-content">';
-                if ($team_excerpt) {
-                    echo '<p>' . $team_excerpt . '</p>';
-                }
-                echo '<a href="' . esc_url($team_permalink) . '" class="sc_icons_item_button button" target="_blank">Find Out More</a>';
-                echo '</div>'; // .post_content
-                echo '</div>'; // .post_body
-
-                echo '</article>';
             }
 
             echo '</div>'; // .elementor-widget-wrap
